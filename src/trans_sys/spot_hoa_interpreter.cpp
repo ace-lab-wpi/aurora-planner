@@ -35,7 +35,6 @@ SpotHoaInterpreter::SpotHoaInterpreter()
 		TaskRegion region(i);
 		alphabet_.insert(std::make_pair(region.GetRegionName(), region.GetRegionBitMap()));
 	}
-
 	//	for(auto it = alphabet_.begin(); it != alphabet_.end(); it++)
 	//		std::cout<< "key: " << it->first << " value: " << it->second << std::endl;
 }

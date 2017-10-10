@@ -32,8 +32,5 @@ target_link_libraries(sampling transsys trajectory)
 #add_library(transsys STATIC ${GRAPH_LIB_SRC})
 #target_link_libraries(transsys spot bddx)
 
-# Add executables
-#add_executable(run_h2c h2c.cpp)
-#target_link_libraries(build_graph graph ${OpenCV_LIBS})
-#target_link_libraries(run_h2c h2c spot bddx)
+
 
