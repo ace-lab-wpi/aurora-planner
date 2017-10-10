@@ -98,6 +98,7 @@ Once you set up all the paremeters, tasks and environment, run src/python_vis/sa
 2. The task for this example is to visit all ROIs without considering the order.
 3. The size of the map in this example is 100*100, the minimun turning radius is 15 for the UAV.
 4. Set a large enough iterations to ensure a feasible solution, the solution towards optimal when iterations -> infinite.
+5. The solution trajectory could be published using lcm, check the details in the code.
 
 
 ## Reference:
