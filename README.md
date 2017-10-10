@@ -89,9 +89,16 @@ export PYTHONPATH=$AURORA_HOME/src/lcmtypes/python:$AURORA_HOME/src/lcmtypes/pyt
 ## 4. Test the example
 
 Follow the test example in src/tests/test_sample_dubins.cpp. 
-When you set up all the paremeters, tasks and environment, the result is looks like:
+Once you set up all the paremeters, tasks and environment, run src/python_vis/sampling_vis.py for visualization first, then run the test example, the result would looks like:
 
 <img src="/data/test_example.png" align="middle" height="500" >
+
+# Comments about the test example
+1. Orange parts are the region of interests(ROI), grey parts are obtacles.
+2. The task for this example is to visit all ROIs without considering the order.
+3. The size of the map in this example is 100*100, the minimun turning radius is 15 for the UAV.
+4. Set a large enough iterations to ensure a feasible solution, the solution towards optimal when iterations -> infinite.
+
 
 ## Reference:
 Git
