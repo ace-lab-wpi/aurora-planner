@@ -93,7 +93,7 @@ Once you set up all the paremeters, tasks and environment, run src/python_vis/sa
 
 <img src="/data/test_example.png" align="middle" height="500" >
 
-# Comments about the test example
+### Comments about the test example
 1. Orange parts are the region of interests(ROI), grey parts are obtacles.
 2. The task for this example is to visit all ROIs without considering the order.
 3. The size of the map in this example is 100*100, the minimun turning radius is 15 for the UAV.
