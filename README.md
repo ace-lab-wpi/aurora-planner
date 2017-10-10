@@ -91,7 +91,7 @@ export PYTHONPATH=$AURORA_HOME/src/lcmtypes/python:$AURORA_HOME/src/lcmtypes/pyt
 Follow the test example in src/tests/test_sample_dubins.cpp. 
 When you set up all the paremeters, tasks and environment, the result is looks like:
 
-<img src="/data/test_example.png" align="right" height="168" >
+<img src="/data/test_example.png" align="left" height="400" >
 
 ## Reference:
 Git
