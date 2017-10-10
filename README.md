@@ -1,4 +1,4 @@
-# Aurora Planner
+# Route Planner - Aurora
 
 ## 1. Development Environment
 
