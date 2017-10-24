@@ -75,7 +75,7 @@ $ git pull origin master
 $ cd ~/Workspace/aurora-planner
 $ mkdir build
 $ cd build
-$ cmake ..
+$ cmake ../src
 $ make
 ```
 
