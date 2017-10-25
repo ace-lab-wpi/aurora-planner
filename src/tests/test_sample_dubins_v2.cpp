@@ -107,21 +107,37 @@ int main()
     std::cout << "Time used for searching: " << stopwatch.toc() << std::endl;
 
     /*** Get result ***/
-    std::vector<std::vector<double>> path = ltl_sampling_dubins.get_path();
+    std::vector<WayPoint> way_points = ltl_sampling_dubins.get_waypoints();
 
     // Publish the trajectory and visualize the result
     sampling::path_data path_data_;
-    path_data_.num_state = path.size();
+    path_data_.num_state = way_points.size();
     path_data_.state_x.resize(path_data_.num_state);
     path_data_.state_y.resize(path_data_.num_state);
-    for (int i = 0; i < path.size(); i++) {
-        path_data_.state_x[i] = path[i][0];
-        path_data_.state_y[i] = path[i][1];
+    for (int i = 0; i < way_points.size(); i++) {
+        path_data_.state_x[i] = way_points[i].x;
+        path_data_.state_y[i] = way_points[i].y;
+        // std::cout << "x: " << way_points[i].x << ", y: " << way_points[i].y << ", time: "<< way_points[i].t << std::endl;
     }
     lcm.publish("PATH", &path_data_);
     sampling::sample_draw draw;
     draw.if_draw = true;
     lcm.publish("DRAW_SAMPLE", &draw);
+
+    // Publish the way points data as planner output
+    rts3a::routePlannerOutputs_t planner_output;
+    planner_output.numWaypoints = way_points.size();
+    planner_output.waypoints.resize(way_points.size());
+    for (int i = 0; i < way_points.size(); i++){
+        rts3a::waypoint_t way_point_;
+        way_point_.x = way_points[i].x;
+        way_point_.y = way_points[i].y;
+        way_point_.z = 0;
+        way_point_.t = way_points[i].t;
+        
+        planner_output.waypoints[i] = way_point_;
+    }
+    lcm.publish("PLANNER_OUTPUT", &planner_output);
 
     return 0;
 }
