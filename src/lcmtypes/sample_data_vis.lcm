@@ -34,3 +34,4 @@ struct sample_draw
 {
     boolean if_draw;
 }
+

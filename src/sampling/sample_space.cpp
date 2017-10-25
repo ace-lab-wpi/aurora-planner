@@ -126,7 +126,7 @@ void SampleSpace::rewire_dubins(uint64_t new_sample_id, int new_sample_ba, std::
                 double decreased_cost = old_cost_of_rewire - rewire_sample.get_cost();
                 new_sample.add_children_id(rewire_sample_id);
                 new_sample.set_traj(dubins_steer_data_new.traj_point_wise);
-
+                new_sample.set_traj_data(dubins_steer_data_new);
 
                 std::queue<std::pair <int, uint64_t>> Q_cost_update;
                 std::vector<std::pair<int, uint64_t>> current_children = rewire_sample.get_children_id();
