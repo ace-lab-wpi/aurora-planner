@@ -8,11 +8,14 @@
 #include <ctime>
 #include <cmath>
 #include <random>
+#include <fstream>
+#include <string>
 
 #include "trajectory/dubins_steer.h"
 #include "trans_sys/spot_hoa_interpreter.h"
 #include "sampling/ltl_sampling_dubins.h"
 #include "stopwatch/stopwatch.h"
+#include "config_reader/config_reader.h"
 
 #include <lcm/lcm-cpp.hpp>
 #include "lcmtypes/acel_lcm_msgs.hpp"
@@ -27,13 +30,16 @@ int main()
     lcm::LCM lcm;
     // Timer
     stopwatch::StopWatch stopwatch;
-
+    // Read the configuration file
+    // ConfigReader config_reader("../../config/test_sample_dubins.ini");
+    ConfigReader config_reader("../../config/test.ini");
+    std::cout << config_reader << std::endl;
     /*** Set up the seaching object ***/
     LTL_SamplingDubins ltl_sampling_dubins;
 
     /*** Set the size of the workspace ***/
-    double work_space_size_x = 100;
-    double work_space_size_y = 100;
+    double work_space_size_x = config_reader.GetReal("work_space_size_x", 0);
+    double work_space_size_y = config_reader.GetReal("work_space_size_y", 0);
     ltl_sampling_dubins.init_workspace(work_space_size_x, work_space_size_y);
     // Publish workspace size for visualization
     sampling::workspace_size_data space_data;
@@ -43,13 +49,13 @@ int main()
 
     /*** Set all parameters ***/
     // EPSILON is the forward step size when sampling searching
-    double EPSILON = (work_space_size_x + work_space_size_y)/2/20;
+    double EPSILON = config_reader.GetReal("EPSILON", 0);
     // RADIUS is the radius of checking aera when sampling searching
-    double RADIUS = EPSILON*2;
+    double RADIUS = config_reader.GetReal("RADIUS", 0);
     // radius_L is the left minimum turning radius
-    double radius_L = 15;
+    double radius_L = config_reader.GetReal("radius_L", 0);
     // radius_R is the right minimum turning radius
-    double radius_R = 15;
+    double radius_R = config_reader.GetReal("radius_R", 0);
     // Set the groud speed of the aircraft
     double ground_speed = 1;
 
@@ -57,7 +63,8 @@ int main()
 
     /*** Read formula ***/
     // "(<> p0) && (<> p1) && (<> p2)" means visit p0, p1 and p2 region of interests
-    std::string ltl_formula = "(<> p0) && (<> p1) && (<> p2)";
+    // std::string ltl_formula = "(<> p0) && (<> p1) && (<> p2)";
+    std::string ltl_formula = config_reader.Get("ltl_formula", "");
     // "<> (p0 && <> (p1 && (<> p2)))" means visit p0, p1 and p2 region of interests and by this order
     // std::string ltl_formula = "<> (p2 && <> (p1 && (<> p0)))";
     // Wrap all region of interests (ROI) as input for reading formula
