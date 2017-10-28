@@ -31,9 +31,9 @@ int main()
     // Timer
     stopwatch::StopWatch stopwatch;
     // Read the configuration file
-    // ConfigReader config_reader("../../config/test_sample_dubins.ini");
-    ConfigReader config_reader("../../config/test.ini");
-    std::cout << config_reader << std::endl;
+    ConfigReader config_reader("../../config/test_sample_dubins.ini");
+    // ConfigReader config_reader("../../config/test.ini");
+    // std::cout << config_reader << std::endl;
     /*** Set up the seaching object ***/
     LTL_SamplingDubins ltl_sampling_dubins;
 
@@ -69,76 +69,67 @@ int main()
     // std::string ltl_formula = "<> (p2 && <> (p1 && (<> p0)))";
     // Wrap all region of interests (ROI) as input for reading formula
     std::vector<std::string> buchi_regions;
-    buchi_regions.push_back("p0");
-    buchi_regions.push_back("p1");
-    buchi_regions.push_back("p2");
+    int num_buchi_regions = config_reader.GetInteger("num_buchi_regions", 0);
+
+    for (int i = 0; i < num_buchi_regions; i++){
+        buchi_regions.push_back(config_reader.Get("buchi_region_" + std::to_string(i), ""));
+    }
+
     // indep_set store the ROI that independent to each other, in this case means p0, p1 and p2 have no intersections
-    std::vector<int> indep_set = {0, 1, 2};
+    int num_indep_regions = config_reader.GetInteger("num_indep_regions", 0);
+
+    // std::vector<int> indep_set = {0, 1, 2};
+    std::vector<int> indep_set;
+    for (int i = 0; i < num_buchi_regions; i++){
+        indep_set.push_back(config_reader.GetInteger("indep_region_" + std::to_string(i), -1));
+    }
+
     ltl_sampling_dubins.read_formula(ltl_formula, buchi_regions, indep_set);
 
     /*** Set the initial state of the UAV ***/
-    std::vector<double> init_state = {50, 10, M_PI/2};
+    // std::vector<double> init_state = {50, 10, M_PI/2};
+    std::vector<double> init_state;
+    init_state.push_back(config_reader.GetReal("init_state_x", -1));
+    init_state.push_back(config_reader.GetReal("init_state_y", -1));
+    init_state.push_back(config_reader.GetReal("init_state_yaw", -1));
     ltl_sampling_dubins.set_init_state(init_state);
     
     /*** Set region of interests ***/
     // All ROI and obstacles are rectangle for now
     // Three parameters are x position, y position and the name of ROI (0 means p0)
-    std::pair <double, double> position_x (20, 35);
-    std::pair <double, double> position_y (30, 45);
-    ltl_sampling_dubins.set_interest_region(position_x, position_y, 0);
-    // For visualization
+    int num_ROI = config_reader.GetInteger("num_ROI", -1);
     sampling::region_data r_data;
-    r_data.position_x[0] =  position_x.first;
-    r_data.position_x[1] =  position_x.second;
-    r_data.position_y[0] =  position_y.first;
-    r_data.position_y[1] =  position_y.second;
-    lcm.publish("REGION", &r_data);
-
-    position_x = std::make_pair(55, 95);
-    position_y = std::make_pair(55, 95);
-    ltl_sampling_dubins.set_interest_region(position_x, position_y, 1);
-    // For visualization
-    r_data.position_x[0] =  position_x.first;
-    r_data.position_x[1] =  position_x.second;
-    r_data.position_y[0] =  position_y.first;
-    r_data.position_y[1] =  position_y.second;
-    lcm.publish("REGION", &r_data);
-
-    position_x = std::make_pair(10, 20);
-    position_y = std::make_pair(80, 90);
-    ltl_sampling_dubins.set_interest_region(position_x, position_y, 2);
-    // For visualization
-    r_data.position_x[0] =  position_x.first;
-    r_data.position_x[1] =  position_x.second;
-    r_data.position_y[0] =  position_y.first;
-    r_data.position_y[1] =  position_y.second;
-    lcm.publish("REGION", &r_data);
+    for (int i = 0; i < num_ROI; i++){
+        std::string region_name = "ROI_" + std::to_string(i);
+        std::pair <double, double> position_x (config_reader.GetReal("position_x_start_" + region_name, -1), config_reader.GetReal("position_x_end_" + region_name, -1));
+        std::pair <double, double> position_y (config_reader.GetReal("position_y_start_" + region_name, -1), config_reader.GetReal("position_y_end_" + region_name, -1));
+        ltl_sampling_dubins.set_interest_region(position_x, position_y, config_reader.GetInteger("label_" + region_name, -1));
+        // For visualization
+        r_data.position_x[0] =  position_x.first;
+        r_data.position_x[1] =  position_x.second;
+        r_data.position_y[0] =  position_y.first;
+        r_data.position_y[1] =  position_y.second;
+        lcm.publish("REGION", &r_data);
+    }
 
     /*** Set obstacles ***/
-    position_x = std::make_pair(35, 62);
-    position_y = std::make_pair(35, 40);
-    ltl_sampling_dubins.set_obstacle(position_x, position_y);
-    // For visualization
-    r_data.position_x[0] =  position_x.first;
-    r_data.position_x[1] =  position_x.second;
-    r_data.position_y[0] =  position_y.first;
-    r_data.position_y[1] =  position_y.second;
-    lcm.publish("OBSTACLE", &r_data);
-
-    position_x = std::make_pair(15, 40);
-    position_y = std::make_pair(65, 70);
-    ltl_sampling_dubins.set_obstacle(position_x, position_y);
-    // For visualization
-    r_data.position_x[0] =  position_x.first;
-    r_data.position_x[1] =  position_x.second;
-    r_data.position_y[0] =  position_y.first;
-    r_data.position_y[1] =  position_y.second;
-    lcm.publish("OBSTACLE", &r_data);
+    int num_obstacles = config_reader.GetInteger("num_obstacles", -1);
+    for (int i = 0; i < num_obstacles; i++){
+        std::string obstacle_name = "obstacle_" + std::to_string(i);
+        std::pair <double, double> position_x (config_reader.GetReal("position_x_start_" + obstacle_name, -1), config_reader.GetReal("position_x_end_" + obstacle_name, -1));
+        std::pair <double, double> position_y (config_reader.GetReal("position_y_start_" + obstacle_name, -1), config_reader.GetReal("position_y_end_" + obstacle_name, -1));
+        ltl_sampling_dubins.set_obstacle(position_x, position_y);
+        // For visualization
+        r_data.position_x[0] =  position_x.first;
+        r_data.position_x[1] =  position_x.second;
+        r_data.position_y[0] =  position_y.first;
+        r_data.position_y[1] =  position_y.second;
+        lcm.publish("OBSTACLE", &r_data);
+    }
     
     /*** Set the number of iterations ***/
     // Solution towards to optimal when iterations -> infinite
-    int iterations = 1500;
-
+    int iterations = config_reader.GetInteger("iterations", -1);;
     /*** Start sampling searching ***/
     stopwatch.tic();
     ltl_sampling_dubins.start_sampling(iterations);
