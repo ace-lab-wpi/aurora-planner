@@ -32,7 +32,6 @@ int main()
     stopwatch::StopWatch stopwatch;
     // Read the configuration file
     ConfigReader config_reader("../../config/test_sample_dubins.ini");
-    // ConfigReader config_reader("../../config/test.ini");
     // std::cout << config_reader << std::endl;
     /*** Set up the seaching object ***/
     LTL_SamplingDubins ltl_sampling_dubins;
@@ -80,7 +79,7 @@ int main()
 
     // std::vector<int> indep_set = {0, 1, 2};
     std::vector<int> indep_set;
-    for (int i = 0; i < num_buchi_regions; i++){
+    for (int i = 0; i < num_indep_regions; i++){
         indep_set.push_back(config_reader.GetInteger("indep_region_" + std::to_string(i), -1));
     }
 

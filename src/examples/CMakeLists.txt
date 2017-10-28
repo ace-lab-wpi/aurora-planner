@@ -16,13 +16,13 @@ set(LCM_GENERATED_HEADER_PATH ${CMAKE_BINARY_DIR}/include)
 include_directories(${LCM_GENERATED_HEADER_PATH})
 
 # Add executables
-add_executable(lcm_subscriber_cpp lcm_subscriber.cpp)
-target_link_libraries(lcm_subscriber_cpp ${LCM_LIBRARIES})
+#add_executable(lcm_subscriber_cpp lcm_subscriber.cpp)
+#target_link_libraries(lcm_subscriber_cpp ${LCM_LIBRARIES})
 
-add_executable(lcm_publisher_cpp lcm_publisher.cpp)
-target_link_libraries(lcm_publisher_cpp ${LCM_LIBRARIES})
+#add_executable(lcm_publisher_cpp lcm_publisher.cpp)
+#target_link_libraries(lcm_publisher_cpp ${LCM_LIBRARIES})
 
-add_executable(logger_example logger_example.cpp)
-target_link_libraries(logger_example utility)
+#add_executable(logger_example logger_example.cpp)
+#target_link_libraries(logger_example utility)
 
-add_executable(stopwatch_example stopwatch_example.cpp)
+#add_executable(stopwatch_example stopwatch_example.cpp)
