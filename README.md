@@ -89,7 +89,8 @@ export PYTHONPATH=$AURORA_HOME/src/lcmtypes/python:$AURORA_HOME/src/lcmtypes/pyt
 ## 4. Test the example
 
 Follow the test example in src/tests/test_sample_dubins.cpp. 
-Once you set up all the paremeters, tasks and environment, run src/python_vis/sampling_vis.py for visualization first, then run the test example, the result would looks like:
+Set all the parameters, tasks and environment in the configuration file config/test_sample_dubins.ini. 
+Run src/python_vis/sampling_vis.py for visualization first, then run the test example. Some of the parameters will be received through LCM, you can run src/tests/planner_input.cpp which publish the lcm message for testing. 
 
 <img src="/data/test_example.png" align="middle" height="500" >
 
