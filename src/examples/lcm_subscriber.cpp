@@ -39,6 +39,8 @@ class Handler
         }
 };
 
+
+
 int main(int argc, char** argv)
 {
     lcm::LCM lcm;

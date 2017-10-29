@@ -22,6 +22,33 @@
 
 using namespace acel;
 
+typedef struct{
+    double groundSpeed;
+    double altitude;
+	double trueAirspeed;
+	double thrust_Undegraded;
+	double thrust_Degraded;
+	double dThrust_dFlightSpeed;
+	double dThrust_dFuelFlowRate;
+	double minimumTurnRadius_meters;
+}routePlannerInputs;
+
+class LCMSubcriber 
+{
+    public:
+        ~LCMSubcriber() {}
+        routePlannerInputs planner_input;
+
+        void plannerInputMessage(const lcm::ReceiveBuffer* rbuf,
+                const std::string& chan, 
+                const rts3a::routePlannerInputs_t* msg){
+
+            planner_input.groundSpeed = msg->groundSpeed;
+            planner_input.minimumTurnRadius_meters = msg->minimumTurnRadius_meters;
+        }
+};
+
+
 int main()
 {
     // Random seed
@@ -34,9 +61,9 @@ int main()
     std::string filename;
     std::cout << "This program will let the user input a configuration filename with its path. e.g. ../../config/test_sample_dubins.ini" << std::endl;
     std::cout << "\nPlease enter your desired filename path." << std::endl;
-    std::cin >> filename;
-    // ConfigReader config_reader("../../config/test_sample_dubins.ini");
-    ConfigReader config_reader(filename);
+    // std::cin >> filename;
+    // ConfigReader config_reader(filename);
+    ConfigReader config_reader("../../config/test_sample_dubins.ini");
     if (config_reader.CheckError()){
         return -1;
     }
@@ -59,13 +86,24 @@ int main()
     double EPSILON = config_reader.GetReal("EPSILON", 0);
     // RADIUS is the radius of checking aera when sampling searching
     double RADIUS = config_reader.GetReal("RADIUS", 0);
-    // radius_L is the left minimum turning radius
-    double radius_L = config_reader.GetReal("radius_L", 0);
-    // radius_R is the right minimum turning radius
-    double radius_R = config_reader.GetReal("radius_R", 0);
-    // Set the groud speed of the aircraft
-    double ground_speed = 1;
 
+    // routePlannerInputs planner_input;
+    
+    // radius_L is the left minimum turning radius
+    // double radius_L = config_reader.GetReal("radius_L", 0);
+    // radius_R is the right minimum turning radius
+    // double radius_R = config_reader.GetReal("radius_R", 0);
+
+    // Recieve and set the groud speed and min turning radius of the aircraft
+    LCMSubcriber lcm_msg;
+    lcm.subscribe("PLANNER_INPUT", &LCMSubcriber::plannerInputMessage, &lcm_msg);
+    std::cout << "Waiting planner input.." << std::endl;
+    while(-1 == lcm.handle());
+    double ground_speed = lcm_msg.planner_input.groundSpeed;
+    double radius_L = lcm_msg.planner_input.minimumTurnRadius_meters;
+    double radius_R = lcm_msg.planner_input.minimumTurnRadius_meters;
+
+    std::cout << "Planner input received.." << std::endl;
     ltl_sampling_dubins.init_parameter(EPSILON, RADIUS, radius_L, radius_R, ground_speed);
 
     /*** Read formula ***/
@@ -139,6 +177,7 @@ int main()
     int iterations = config_reader.GetInteger("iterations", -1);;
     /*** Start sampling searching ***/
     stopwatch.tic();
+    std::cout << "Starting searching.." << std::endl;
     ltl_sampling_dubins.start_sampling(iterations);
     std::cout << "Time used for searching: " << stopwatch.toc() << std::endl;
 

@@ -2,6 +2,7 @@ package rts3a;
 
 struct routePlannerInputs_t
 {
+	double groundSpeed;
     double altitude;
 	double trueAirspeed;
 	double thrust_Undegraded;
