@@ -11,8 +11,6 @@
 #include <fstream>
 #include <string>
 
-#include "trajectory/dubins_steer.h"
-#include "trans_sys/spot_hoa_interpreter.h"
 #include "sampling/ltl_sampling_dubins.h"
 #include "stopwatch/stopwatch.h"
 #include "config_reader/config_reader.h"
@@ -47,7 +45,6 @@ class LCMSubcriber
             planner_input.minimumTurnRadius_meters = msg->minimumTurnRadius_meters;
         }
 };
-
 
 int main()
 {
@@ -86,13 +83,10 @@ int main()
     double EPSILON = config_reader.GetReal("EPSILON", 0);
     // RADIUS is the radius of checking aera when sampling searching
     double RADIUS = config_reader.GetReal("RADIUS", 0);
-
-    // routePlannerInputs planner_input;
-    
-    // radius_L is the left minimum turning radius
-    // double radius_L = config_reader.GetReal("radius_L", 0);
-    // radius_R is the right minimum turning radius
-    // double radius_R = config_reader.GetReal("radius_R", 0);
+    // time_step is the time step for way points sequence
+    double time_step = config_reader.GetReal("time_step", 0);
+    // // min_radius is the minimum turning radius
+    // double min_radius = config_reader.GetReal("min_radius", 0);
 
     // Recieve and set the groud speed and min turning radius of the aircraft
     LCMSubcriber lcm_msg;
@@ -100,11 +94,10 @@ int main()
     std::cout << "Waiting planner input.." << std::endl;
     while(-1 == lcm.handle());
     double ground_speed = lcm_msg.planner_input.groundSpeed;
-    double radius_L = lcm_msg.planner_input.minimumTurnRadius_meters;
-    double radius_R = lcm_msg.planner_input.minimumTurnRadius_meters;
+    double min_radius = lcm_msg.planner_input.minimumTurnRadius_meters;
 
     std::cout << "Planner input received.." << std::endl;
-    ltl_sampling_dubins.init_parameter(EPSILON, RADIUS, radius_L, radius_R, ground_speed);
+    ltl_sampling_dubins.init_parameter(EPSILON, RADIUS, min_radius, ground_speed, time_step);
 
     /*** Read formula ***/
     // "(<> p0) && (<> p1) && (<> p2)" means visit p0, p1 and p2 region of interests
@@ -210,7 +203,7 @@ int main()
         way_point_.y = way_points[i].y;
         way_point_.z = 0;
         way_point_.t = way_points[i].t;
-        
+        std::cout << "x: " << way_points[i].x << ", y: " << way_points[i].y << ", time: "<< way_points[i].t << std::endl;
         planner_output.waypoints[i] = way_point_;
     }
     lcm.publish("PLANNER_OUTPUT", &planner_output);
