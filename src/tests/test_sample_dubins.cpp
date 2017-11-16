@@ -85,6 +85,8 @@ int main()
     double RADIUS = config_reader.GetReal("RADIUS", 0);
     // time_step is the time step for way points sequence
     double time_step = config_reader.GetReal("time_step", 0);
+    // collision_check_rate is the percentage that sampling nodes will do the collision checking
+    double collision_check_rate = config_reader.GetReal("collision_check_rate", 0);
     // // min_radius is the minimum turning radius
     // double min_radius = config_reader.GetReal("min_radius", 0);
 
@@ -97,7 +99,8 @@ int main()
     double min_radius = lcm_msg.planner_input.minimumTurnRadius_meters;
 
     std::cout << "Planner input received.." << std::endl;
-    ltl_sampling_dubins.init_parameter(EPSILON, RADIUS, min_radius, ground_speed, time_step);
+    
+    ltl_sampling_dubins.init_parameter(EPSILON, RADIUS, min_radius, ground_speed, time_step, collision_check_rate);
 
     /*** Read formula ***/
     // "(<> p0) && (<> p1) && (<> p2)" means visit p0, p1 and p2 region of interests
@@ -203,7 +206,7 @@ int main()
         way_point_.y = way_points[i].y;
         way_point_.z = 0;
         way_point_.t = way_points[i].t;
-        std::cout << "x: " << way_points[i].x << ", y: " << way_points[i].y << ", time: "<< way_points[i].t << std::endl;
+        // std::cout << "x: " << way_points[i].x << ", y: " << way_points[i].y << ", time: "<< way_points[i].t << std::endl;
         planner_output.waypoints[i] = way_point_;
     }
     lcm.publish("PLANNER_OUTPUT", &planner_output);

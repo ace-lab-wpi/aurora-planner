@@ -17,8 +17,7 @@ private:
     std::string ltl_formula_;
     double EPSILON = 6;
     double RADIUS = 12;
-    std::vector<std::vector<double>> path_;
-
+    std::vector<std::vector<double>> path_; 
     BAStruct ba_;
     SampleSpace all_space_;
     std::map<int, Region> all_interest_regions_;
